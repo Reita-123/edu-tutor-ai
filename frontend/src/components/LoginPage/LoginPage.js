@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useGoogleLogin } from "@react-oauth/google";
 import "./LoginPage.css";
 
 const LoginPage = ({ onLogin, onDemo, onGoogleLogin }) => {
@@ -9,7 +8,6 @@ const LoginPage = ({ onLogin, onDemo, onGoogleLogin }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) {
@@ -64,7 +62,7 @@ const LoginPage = ({ onLogin, onDemo, onGoogleLogin }) => {
           Try Demo Account
         </button>
 
-        {/* --- GOOGLE SIGN-IN BUTTON (updated for redirect flow) --- */}
+        {/* --- GOOGLE SIGN-IN BUTTON (redirect version) --- */}
         <a href="https://edu-tutor-ai.onrender.com/auth/google">
           <button
             className="btn google-btn"
@@ -77,7 +75,10 @@ const LoginPage = ({ onLogin, onDemo, onGoogleLogin }) => {
 
         <div style={{ textAlign: "center", marginTop: "16px" }}>
           <span>Don't have an account? </span>
-          <Link to="/register" style={{ color: "#667eea", fontWeight: "bold", textDecoration: "none" }}>
+          <Link
+            to="/register"
+            style={{ color: "#667eea", fontWeight: "bold", textDecoration: "none" }}
+          >
             Register
           </Link>
         </div>
