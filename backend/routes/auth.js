@@ -59,9 +59,14 @@ router.get('/google', passport.authenticate('google', {
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    // Redirect to frontend dashboard
-    res.redirect('http://localhost:3000/dashboard');
+    // Redirect to backend success page
+    res.redirect('/success');
   }
 );
+
+// Success route after login
+router.get('/success', (req, res) => {
+  res.send(`Login successful! Welcome ${req.user?.name || 'Guest'} 🎉`);
+});
 
 module.exports = router;
