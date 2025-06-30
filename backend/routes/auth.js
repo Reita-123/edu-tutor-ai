@@ -3,6 +3,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const { getClassroomCourses } = require('../utils/classroom');
 
 const router = express.Router();
 
@@ -60,13 +61,28 @@ router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
     // Redirect to backend success page
-    res.redirect('/success');
+    res.redirect('https://edu-tutor-ai-ten.vercel.app/dashboard');
   }
 );
 
 // Success route after login
 router.get('/success', (req, res) => {
   res.send(`Login successful! Welcome ${req.user?.name || 'Guest'} 🎉`);
+});
+
+// 📘 Route to fetch Google Classroom courses
+router.get('/google/courses', async (req, res) => {
+  try {
+    if (!req.user || !req.user.accessToken) {
+      return res.status(401).json({ message: 'Not authenticated' });
+    }
+
+    const courses = await getClassroomCourses(req.user.accessToken);
+    res.json(courses);
+  } catch (err) {
+    console.error("Error fetching classroom courses:", err.message);
+    res.status(500).json({ message: 'Failed to fetch courses from Google Classroom' });
+  }
 });
 
 module.exports = router;

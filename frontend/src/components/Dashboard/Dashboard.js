@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./Dashboard.css";
 
 const initialLearningPath = [
@@ -18,16 +18,26 @@ const Dashboard = ({ user, onLogout }) => {
   const [subjectProgress, setSubjectProgress] = useState(40);
   const [learningPath, setLearningPath] = useState(initialLearningPath);
 
-  // Dummy "Complete Lesson" logic
+  useEffect(() => {
+    fetch("https://edu-tutor-ai.onrender.com/auth/me", {
+      credentials: "include"
+    })
+      .then(res => res.ok ? res.json() : null)
+      .then(data => {
+        if (data) {
+          console.log("Logged-in user:", data);
+          // Optionally store to local state or global store if needed
+        }
+      });
+  }, []);
+
   const handleCompleteLesson = () => {
     setCompletedLessons((c) => c + 1);
     setCurrentStreak((s) => s + 1);
     setOverallProgress((p) => Math.min(p + 5, 100));
     setSubjectProgress((sp) => {
       const next = Math.min(sp + 15, 100);
-      // Progress learning path
       if (next === 100) {
-        // Move to next path item
         const idx = learningPath.findIndex((p) => p.status === "current");
         if (idx !== -1 && idx + 1 < learningPath.length) {
           const newPath = learningPath.map((item, i) =>
@@ -147,7 +157,6 @@ function AIDemoChat({ topic }) {
   ]);
   const [input, setInput] = useState("");
 
-  // Dummy AI reply logic
   const handleSend = () => {
     if (!input.trim()) return;
     setMessages((msgs) => [
