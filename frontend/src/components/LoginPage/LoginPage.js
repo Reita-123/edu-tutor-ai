@@ -77,7 +77,7 @@ const LoginPage = ({ onLogin, onDemo, onGoogleLogin }) => {
         </button>
 
         {/* --- GOOGLE SIGN-IN BUTTON (updated for redirect flow) --- */}
-        <a href="http://localhost:5000/api/auth/google">
+        <a href="https://edu-tutor-ai.onrender.com/auth/google">
           <button
             className="btn google-btn"
             type="button"
