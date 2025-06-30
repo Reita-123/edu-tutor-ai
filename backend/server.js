@@ -22,5 +22,5 @@ app.get('/api/profile', (req, res) => {
   res.json({ username: 'student', name: 'Demo Student' });
 });
 
-// Changed port to 5001
-app.listen(5001, () => console.log('Server running on http://localhost:5001'));
+// Changed port to 5000
+app.listen(5000, () => console.log('Server running on http://localhost:5000'));
