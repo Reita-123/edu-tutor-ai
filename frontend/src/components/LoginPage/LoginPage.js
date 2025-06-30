@@ -1,21 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useGoogleLogin } from "@react-oauth/google"; // NEW: Import the hook
+import { useGoogleLogin } from "@react-oauth/google";
 import "./LoginPage.css";
 
 const LoginPage = ({ onLogin, onDemo, onGoogleLogin }) => {
-  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Google login handler
+  // Google login handler (can keep for future token-based flow)
   const googleLogin = useGoogleLogin({
     scope: 'https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.coursework.me.readonly',
     flow: 'implicit',
     onSuccess: tokenResponse => {
       setError("");
-      // Pass the access token up to App.js using a new prop
       if (onGoogleLogin) onGoogleLogin(tokenResponse.access_token, navigate);
     },
     onError: () => {
@@ -25,12 +24,12 @@ const LoginPage = ({ onLogin, onDemo, onGoogleLogin }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!username || !password) {
-      setError("Please enter both username and password.");
+    if (!email || !password) {
+      setError("Please enter both email and password.");
       return;
     }
     setError("");
-    if (onLogin) onLogin(username, password, navigate);
+    if (onLogin) onLogin(email, password, navigate);
   };
 
   const handleDemo = () => {
@@ -47,15 +46,15 @@ const LoginPage = ({ onLogin, onDemo, onGoogleLogin }) => {
         </div>
         <form onSubmit={handleSubmit} className="login-form">
           <div className="form-group">
-            <label htmlFor="username">Username</label>
+            <label htmlFor="email">Email</label>
             <input
-              id="username"
-              type="text"
-              autoComplete="username"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
+              id="email"
+              type="email"
+              autoComplete="email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
               required
-              placeholder="Enter your username"
+              placeholder="Enter your email"
             />
           </div>
           <div className="form-group">
@@ -76,15 +75,18 @@ const LoginPage = ({ onLogin, onDemo, onGoogleLogin }) => {
         <button className="btn demo-btn" type="button" onClick={handleDemo}>
           Try Demo Account
         </button>
-        {/* --- GOOGLE SIGN-IN BUTTON --- */}
-        <button
-          className="btn google-btn"
-          type="button"
-          style={{ background: "#4285F4", color: "#fff", marginTop: 12 }}
-          onClick={() => googleLogin()}
-        >
-          Sign in with Google
-        </button>
+
+        {/* --- GOOGLE SIGN-IN BUTTON (updated for redirect flow) --- */}
+        <a href="http://localhost:5000/api/auth/google">
+          <button
+            className="btn google-btn"
+            type="button"
+            style={{ background: "#4285F4", color: "#fff", marginTop: 12 }}
+          >
+            Sign in with Google
+          </button>
+        </a>
+
         <div style={{ textAlign: "center", marginTop: "16px" }}>
           <span>Don't have an account? </span>
           <Link to="/register" style={{ color: "#667eea", fontWeight: "bold", textDecoration: "none" }}>

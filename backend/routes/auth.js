@@ -59,8 +59,8 @@ router.get('/google', passport.authenticate('google', {
 router.get('/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
   (req, res) => {
-    // Redirect to frontend/dashboard or send user info as needed
-    res.redirect('/success'); // You can change this route as needed
+    // Redirect to frontend dashboard
+    res.redirect('http://localhost:3000/dashboard');
   }
 );
 

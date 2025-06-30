@@ -13,18 +13,17 @@ import Profile from "./components/Profile/Profile";
 function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [user, setUser] = useState("");
-  const [googleAccessToken, setGoogleAccessToken] = useState(""); // Store Google token if needed
+  const [googleAccessToken, setGoogleAccessToken] = useState("");
 
-  // Login handler: Connects to backend
+  // ✅ Login handler updated to send email instead of username
   const handleLogin = async (username, password, navigate) => {
     try {
-      const response = await fetch("http://localhost:5000/api/login", {
+      const response = await fetch("http://localhost:5000/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ email: username, password }), // 👈 changed username ➝ email
       });
 
-      // If status is not 200, treat as invalid credentials
       if (!response.ok) {
         const errData = await response.json();
         alert("Login failed: " + (errData.message || "Invalid credentials."));
@@ -33,44 +32,40 @@ function App() {
 
       const data = await response.json();
 
-      if (data.success) {
-        setUser(data.user.name); // or data.user.username if you want
+      // ✅ Check for user object and update name
+      if (data.token && data.user) {
+        setUser(data.user.email); // You could use `data.user.email` or `.name` if available
         setLoggedIn(true);
-        setGoogleAccessToken(""); // Not a Google login
+        setGoogleAccessToken("");
         navigate("/dashboard");
       } else {
-        alert("Login failed: Invalid credentials.");
+        alert("Login failed: Invalid response from server.");
       }
     } catch (err) {
       alert("Login failed: " + err.message);
     }
   };
 
-  // Google login handler
   const handleGoogleLogin = (accessToken, navigate) => {
-    // Optionally: fetch user info with the access token here
-    setUser("Google User"); // You could fetch/display real name if you want
+    setUser("Google User");
     setLoggedIn(true);
     setGoogleAccessToken(accessToken);
     navigate("/dashboard");
   };
 
-  // Demo login handler (unchanged)
   const handleDemo = (navigate) => {
     setUser("Demo Student");
     setLoggedIn(true);
-    setGoogleAccessToken(""); // Not a Google login
+    setGoogleAccessToken("");
     navigate("/dashboard");
   };
 
-  // Logout
   const handleLogout = () => {
     setLoggedIn(false);
     setUser("");
     setGoogleAccessToken("");
   };
 
-  // Register handler (stub, expand for real registration)
   const handleRegister = (data, navigate) => {
     navigate("/login");
   };
@@ -90,7 +85,7 @@ function App() {
                 <LoginPage
                   onLogin={handleLogin}
                   onDemo={handleDemo}
-                  onGoogleLogin={handleGoogleLogin} // Pass Google login handler
+                  onGoogleLogin={handleGoogleLogin}
                 />
               )
             }
@@ -123,15 +118,11 @@ function App() {
           />
           <Route
             path="/quizzes"
-            element={
-              loggedIn ? <Quizzes /> : <Navigate to="/login" replace />
-            }
+            element={loggedIn ? <Quizzes /> : <Navigate to="/login" replace />}
           />
           <Route
             path="/profile"
-            element={
-              loggedIn ? <Profile /> : <Navigate to="/login" replace />
-            }
+            element={loggedIn ? <Profile /> : <Navigate to="/login" replace />}
           />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
