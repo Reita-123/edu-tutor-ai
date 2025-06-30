@@ -9,19 +9,7 @@ const LoginPage = ({ onLogin, onDemo, onGoogleLogin }) => {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  // Google login handler (can keep for future token-based flow)
-  const googleLogin = useGoogleLogin({
-    scope: 'https://www.googleapis.com/auth/classroom.courses.readonly https://www.googleapis.com/auth/classroom.coursework.me.readonly',
-    flow: 'implicit',
-    onSuccess: tokenResponse => {
-      setError("");
-      if (onGoogleLogin) onGoogleLogin(tokenResponse.access_token, navigate);
-    },
-    onError: () => {
-      setError("Google Login Failed");
-    }
-  });
-
+  
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email || !password) {
